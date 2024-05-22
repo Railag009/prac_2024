@@ -1,0 +1,135 @@
+CREATE TABLE client(
+	id_client INT PRIMARY KEY AUTO_INCREMENT,
+	name_client VARCHAR(50) NOT NULL,
+	nomer_passport_client INT NOT NULL,
+	series_passport_client INT NOT NULL
+);
+
+CREATE TABLE car (
+	id_car INT PRIMARY KEY AUTO_INCREMENT,
+	model_car VARCHAR(50) NOT NULL,
+	color_car VARCHAR(50) NOT NULL,
+	year_car INT NOT NULL,
+	nomer_car VARCHAR(50) NOT NULL,
+	insurance_car INT NOT NULL,
+	price_day_car INT NOT NULL
+	
+);
+
+CREATE TABLE prokat(
+	id_prokat INT PRIMARY KEY AUTO_INCREMENT,
+	id_client INT NOT NULL,
+	id_car INT NOT NULL,
+	start_day date NOT NULL,
+	count_day INT NOT NULL,
+	FOREIGN KEY (id_client) REFERENCES client(id_client),
+	FOREIGN KEY (id_car) REFERENCES car(id_car)
+);
+
+DROP TABLE client;
+DROP TABLE car;
+DROP TABLE prokat;
+
+
+SELECT * FROM prokat;
+SELECT * FROM car; 
+SELECT * FROM client;
+
+INSERT INTO client (name_client, nomer_passport_client, series_passport_client) VALUES
+('Иванов Иван Иванович', '676451', '9816'),
+('Петров Петр Петрович', '826816', '1488'),
+('Сидоров Сергей Сергеевич', '815667', '0618'),
+('Макаров Максим Максимович', '342815', '3289'),
+('Николаев Николай Николаевич', '173928', '1111'),
+('Дмитриев Дмитрий Дмитриевич', '642850', '8924'),
+('Алексеев Алексей Алексеевич', '148800', '1191'),
+('Белов Борис Борисович', '618726', '6385'),
+('Голубев Георгий Георгиевич', '360600', '1812'),
+('Жуков Жан Жанович', '696969', '2042');
+
+INSERT INTO car (model_car, color_car, year_car, nomer_car, insurance_car, price_day_car) VALUES
+('Toyota Corolla', 'Red', 2020, '123', 10000, 500),
+('Honda Civic', 'Blue', 2019, '456', 8000, 450),
+('Ford Mustang', 'Green', 2017, '999', 15000, 750),
+('Ford Mustang', 'Black', 1995, '789', 12000, 600),
+('Chevrolet Camaro', 'White', 2022, '102', 11000, 550),
+('BMW 1 Series', 'Silver', 2007, '345', 9000, 480),
+('Audi A4', 'White', 2014, '678', 8500, 475),
+('Mercedes-Benz C-Class', 'Black', 2023, '910', 13000, 650),
+('Tesla Model S', 'Silver', 2024, '111', 15000, 700),
+('Volkswagen Golf', 'Green', 2013, '222', 7500, 400),
+('Toyota Corolla', 'Green', 2020, '148', 11000, 500),
+('Audi A4', 'Yellow', 2017, '618', 9500, 480),
+('Subaru WRX', 'Yellow', 2015, '333', 7000, 375);
+
+INSERT INTO prokat (id_client, id_car, start_day, count_day)
+VALUES 
+(1, 1, '2024-01-01', 7),
+(7, 1, '2024-02-15', 5),
+(3, 3, '2024-03-20', 10),
+(4, 4, '2024-04-05', 6),
+(5, 5, '2024-05-18', 9),
+(6, 6, '2024-06-30', 8),
+(2, 7, '2024-07-15', 12),
+(8, 8, '2024-08-25', 7),
+(9, 9, '2024-09-10', 5),
+(10, 10, '2024-10-26', 10);
+
+
+
+1 ЗАПРОС
+SELECT * FROM car
+WHERE model_car = ?;
+
+2 ЗАПРОС
+SELECT * FROM car WHERE year_car < ?;
+
+3 ЗАПРОС
+SELECT * FROM car
+WHERE model_car = ? AND WHERE year_car > ?;
+
+4 ЗАПРОС
+SELECT * FROM car
+WHERE nomer_car = ?;
+
+5зарос
+SELECT c.name_client AS ClientName, 
+       ca.model_car AS CarModel, 
+       ca.nomer_car AS CarNumber, 
+       p.start_day AS RentalStartDate
+FROM client c
+JOIN prokat p ON c.id_client = p.id_client
+JOIN car ca ON p.id_car = ca.id_car
+WHERE p.start_day BETWEEN ? AND ?;
+
+6запрос
+SELECT 
+        ca.nomer_car AS CarNumber, 
+        ca.model_car AS CarModel, 
+        p.start_day AS RentalStartDate, 
+        p.count_day AS RentalDays, 
+        ca.price_day_car AS PriceDayCar,
+        ca.price_day_car * p.count_day AS TotalRentalCost
+    FROM 
+        car ca
+    JOIN 
+        prokat p ON ca.id_car = p.id_car;
+
+7запрос
+SELECT 
+    model_car, 
+    AVG(insurance_car) AS AverageInsuranceCost
+FROM 
+    car
+GROUP BY 
+    model_car;
+
+8запрос
+SELECT 
+    year_car, 
+    MIN(price_day_car) AS MinDailyRentPrice, 
+    MAX(price_day_car) AS MaxDailyRentPrice
+FROM 
+    car
+GROUP BY 
+    year_car;
